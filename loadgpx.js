@@ -97,7 +97,11 @@ GPXParser.prototype.createMarker = function(point) {
     }
     else {
         // Create the html if it does not exist in the point.
-        html = "<b>" + this.translateName(point.nodeName) + "</b><br>";
+        
+		var nameTag = point.getElementsByTagName("name");
+		html = "<b>" + nameTag[0].nodeValue + "</b>";
+
+		/*html = "<b>" + this.translateName(point.nodeName) + "</b><br>";
         var attributes = point.attributes;
         var attrlen = attributes.length;
         for(i = 0; i < attrlen; i++) {
@@ -115,8 +119,8 @@ GPXParser.prototype.createMarker = function(point) {
                 html += children[i].nodeName + " = " +
                         children[i].firstChild.nodeValue + "<br>";
             }
-        }
-    }
+        }*/
+	}
 
     var marker = new google.maps.Marker({
         position: new google.maps.LatLng(lat,lon),
@@ -293,3 +297,4 @@ GPXParser.prototype.addWaypointsToMap = function() {
         this.createMarker(waypoints[i]);
     }
 }
+
