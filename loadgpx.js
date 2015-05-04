@@ -78,6 +78,9 @@ GPXParser.prototype.translateName = function(name) {
     else if(name == "trkpt") {
         return "Track Point";
     }
+    else if (name == "rtept") {
+         return "Route Point";
+    }
 }
 
 
@@ -136,9 +139,35 @@ GPXParser.prototype.addTrackSegmentToMap = function(trackSegment, colour,
     if(trackpoints.length == 0) {
         return;
     }
+	
+	this.drawSegmentsToMap(trackpoints, colour, width);
+}
+
+GPXParser.prototype.addRouteToMap = function(route, colour,
+        width) {
+    var trackpoints = route.getElementsByTagName("rtept");
+    if(trackpoints.length == 0) {
+        return;
+    }
+	
+	this.drawSegmentsToMap(trackpoints, colour, width);
+}
+
+GPXParser.prototype.drawSegmentsToMap = function(trackpoints, colour,
+        width) {
 
     var pointarray = [];
 
+    for(var i = 0; i < trackpoints.length; i++) {
+	    var nameTags = trackpoints[i].getElementsByTagName("name");
+		var htmlTags = trackpoints[i].getElementsByTagName("html");
+	    
+		if (nameTags.length || htmlTags.length)
+		{
+			this.createMarker(trackpoints[i]);
+		}
+	}
+	
     // process first point
     var lastlon = parseFloat(trackpoints[0].getAttribute("lon"));
     var lastlat = parseFloat(trackpoints[0].getAttribute("lat"));
@@ -180,7 +209,7 @@ GPXParser.prototype.addTrackToMap = function(track, colour, width) {
 
 GPXParser.prototype.centerAndZoom = function(trackSegment) {
 
-    var pointlist = new Array("trkpt", "wpt");
+    var pointlist = new Array("trkpt", "wpt", "rtept");
     var minlat = 0;
     var maxlat = 0;
     var minlon = 0;
@@ -248,6 +277,13 @@ GPXParser.prototype.addTrackpointsToMap = function() {
     var tracks = this.xmlDoc.documentElement.getElementsByTagName("trk");
     for(var i = 0; i < tracks.length; i++) {
         this.addTrackToMap(tracks[i], this.trackcolour, this.trackwidth);
+    }
+}
+
+GPXParser.prototype.addRoutepointsToMap = function() {
+    var routes = this.xmlDoc.documentElement.getElementsByTagName("rte");
+    for(var i = 0; i < routes.length; i++) {
+        this.addRouteToMap(routes[i], this.trackcolour, this.trackwidth);
     }
 }
 
